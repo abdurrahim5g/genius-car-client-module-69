@@ -15,6 +15,7 @@ const Orders = () => {
       .then((res) => {
         if (res.status === 403 || res.status === 401) {
           logOut();
+          navigator("/login");
         }
         return res.json();
       })
@@ -29,13 +30,16 @@ const Orders = () => {
     if (proceed) {
       fetch(`http://localhost:5000/orders/${id}`, {
         method: "DELETE",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
       })
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
           if (data.deletedCount > 0) {
             alert("deleted successfully");
-            const remaining = orders.filter((odr) => odr._id !== id);
+            const remaining = orders?.filter((odr) => odr._id !== id);
             setOrders(remaining);
           }
         });
@@ -47,6 +51,7 @@ const Orders = () => {
       method: "PATCH",
       headers: {
         "content-type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
       body: JSON.stringify({ status: "Approved" }),
     })
@@ -54,8 +59,8 @@ const Orders = () => {
       .then((data) => {
         console.log(data);
         if (data.modifiedCount > 0) {
-          const remaining = orders.filter((odr) => odr._id !== id);
-          const approving = orders.find((odr) => odr._id === id);
+          const remaining = orders?.filter((odr) => odr._id !== id);
+          const approving = orders?.find((odr) => odr._id === id);
           approving.status = "Approved";
 
           const newOrders = [approving, ...remaining];
