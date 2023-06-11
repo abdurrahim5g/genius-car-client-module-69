@@ -10,9 +10,10 @@ const PrivateRoute = ({ children }) => {
     return <h1 className="text-5xl">Loading...</h1>;
   }
 
-  if (user) {
+  if (user?.uid) {
     return children;
   }
+
   return <Navigate to="/login" state={{ from: location }} replace></Navigate>;
 };
 
